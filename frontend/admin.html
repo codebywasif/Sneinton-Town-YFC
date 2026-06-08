@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Admin dashboard for managing registrations — Sneinton Town Youth FC Saturday Soccer School.">
+  <title>Admin Dashboard | £1 Saturday Soccer School</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+</head>
+<body>
+  <div class="bg-pattern"></div>
+
+  <!-- Navigation -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="container">
+      <a href="/" class="nav-brand">
+        <div class="brand-icon">⚽</div>
+        <span>Sneinton Town YFC</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="/">Home</a>
+        <a href="/register.html">Register</a>
+        <a href="/admin.html" style="color:var(--gold-400)">Admin</a>
+      </div>
+      <button class="nav-mobile-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
+    </div>
+  </nav>
+
+  <!-- Admin Login -->
+  <div class="admin-page">
+    <div class="container">
+      <div class="admin-login" id="adminLogin">
+        <div class="form-card">
+          <h1>🔐 Admin Access</h1>
+          <p>Enter the admin password to manage registrations.</p>
+          <div class="form-group">
+            <input type="password" id="adminPassword" placeholder="Enter admin password" style="text-align:center;">
+          </div>
+          <button class="btn btn-primary" id="loginBtn" style="width:100%;">
+            Unlock Dashboard
+          </button>
+        </div>
+      </div>
+
+      <!-- Admin Dashboard -->
+      <div class="admin-dashboard" id="adminDashboard">
+        <div style="padding-top:20px;">
+          <h1 style="font-family:var(--font-display);font-size:2rem;font-weight:800;margin-bottom:var(--space-sm);">
+            📊 Registration Dashboard
+          </h1>
+          <p style="color:var(--text-secondary);margin-bottom:var(--space-2xl);">
+            Manage all registrations for the £1 Saturday Soccer School.
+          </p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number" id="statTotal">0</div>
+            <div class="stat-label">Total Registrations</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-number" id="statRecent">0</div>
+            <div class="stat-label">This Week</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🌐</div>
+            <div class="stat-number" id="statWebsite">0</div>
+            <div class="stat-label">From Website</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-number" id="statGoogle">0</div>
+            <div class="stat-label">From Google Forms</div>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="admin-toolbar">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search by name or phone...">
+          </div>
+          <div class="toolbar-actions">
+            <select class="filter-select" id="filterSession">
+              <option value="">All Sessions</option>
+              <option value="10-11-mixed">10–11 (Ages 6–11)</option>
+              <option value="11-12-mixed">11–12 (Ages 11–16)</option>
+              <option value="1-2-girls">1–2 (Girls Only)</option>
+            </select>
+            <select class="filter-select" id="filterSource">
+              <option value="">All Sources</option>
+              <option value="website">Website</option>
+              <option value="google_forms">Google Forms</option>
+            </select>
+            <button class="btn btn-secondary btn-sm" id="importBtn">📥 Import CSV</button>
+            <button class="btn btn-secondary btn-sm" id="exportBtn">📤 Export CSV</button>
+          </div>
+        </div>
+
+        <!-- Registrations Table -->
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Child</th>
+                <th>Parent/Guardian</th>
+                <th>Contact</th>
+                <th>Session</th>
+                <th>Age/DOB</th>
+                <th>Source</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="registrationsBody">
+              <tr>
+                <td colspan="8" class="table-empty">Loading registrations...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import Modal -->
+  <div class="modal-overlay" id="importModal">
+    <div class="modal">
+      <h2>📥 Import from Google Forms</h2>
+      <p>Upload a CSV file exported from Google Forms. The system will automatically map columns and import registrations. Duplicates (same child name + DOB) will be skipped.</p>
+
+      <div class="import-result" id="importResult"></div>
+
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">📄</div>
+        <div class="upload-text">Click to select CSV file or drag & drop</div>
+        <div class="upload-hint">Exported from Google Forms → Responses → Download (.csv)</div>
+        <input type="file" id="csvFileInput" accept=".csv" style="display:none;">
+      </div>
+
+      <div id="selectedFile" style="display:none;margin-bottom:var(--space-md);padding:var(--space-md);background:rgba(255,255,255,0.05);border-radius:var(--radius-md);font-size:0.9rem;">
+        <span id="fileName"></span>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary btn-sm" id="cancelImport">Cancel</button>
+        <button class="btn btn-primary btn-sm" id="confirmImport" disabled>Import Data</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/admin.js"></script>
+  <script>
+    // Mobile nav toggle
+    document.getElementById('navToggle')?.addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

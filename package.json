@@ -1,0 +1,16 @@
+{
+  "name": "onepound-football-club",
+  "version": "1.0.0",
+  "description": "Sneinton Town Youth FC — £1 Saturday Soccer School website & registration system",
+  "scripts": {
+    "dev": "node backend/server.js",
+    "start": "node backend/server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "cors": "^2.8.5",
+    "csv-parse": "^5.6.0",
+    "express": "^4.21.0",
+    "multer": "^1.4.5-lts.1"
+  }
+}

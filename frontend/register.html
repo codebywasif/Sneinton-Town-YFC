@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Register your child for £1 Saturday Soccer School at Nottingham Academy — Sneinton Town Youth FC.">
+  <title>Register | £1 Saturday Soccer School</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+</head>
+<body>
+  <div class="bg-pattern"></div>
+
+  <!-- Navigation -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="container">
+      <a href="/" class="nav-brand">
+        <div class="brand-icon">⚽</div>
+        <span>Sneinton Town YFC</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="/">Home</a>
+        <a href="/#sessions">Sessions</a>
+        <a href="/#info">Info</a>
+        <a href="/#location">Location</a>
+        <a href="/register.html" class="nav-cta">Register Now</a>
+      </div>
+      <button class="nav-mobile-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
+    </div>
+  </nav>
+
+  <!-- Registration Form -->
+  <div class="form-page">
+    <div class="container">
+      <div class="form-wrapper">
+        <div class="form-card">
+          <!-- Form -->
+          <div id="registrationForm">
+            <div class="form-header">
+              <h1>⚽ Register Your Child</h1>
+              <p>Fill in the details below to sign up for our £1 Saturday Soccer School at Nottingham Academy.</p>
+            </div>
+
+            <div class="form-error" id="formError"></div>
+
+            <form id="regForm" novalidate>
+              <!-- Parent/Guardian Section -->
+              <div class="form-section">
+                <div class="form-section-title">👤 Parent / Guardian Details</div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="parentName">Full Name <span class="required">*</span></label>
+                    <input type="text" id="parentName" name="parent_name" placeholder="e.g. Sarah Johnson" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="parentPhone">Phone Number <span class="required">*</span></label>
+                    <input type="tel" id="parentPhone" name="parent_phone" placeholder="e.g. 07738 729828" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="parentEmail">Email Address</label>
+                  <input type="email" id="parentEmail" name="parent_email" placeholder="e.g. sarah@example.com">
+                </div>
+              </div>
+
+              <!-- Child Section -->
+              <div class="form-section">
+                <div class="form-section-title">👧 Child Details</div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="childName">Child's Full Name <span class="required">*</span></label>
+                    <input type="text" id="childName" name="child_name" placeholder="e.g. Emily Johnson" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="childDob">Date of Birth <span class="required">*</span></label>
+                    <input type="date" id="childDob" name="child_dob" required>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="childGender">Gender</label>
+                    <select id="childGender" name="child_gender">
+                      <option value="">Select...</option>
+                      <option value="female">Female</option>
+                      <option value="male">Male</option>
+                      <option value="other">Other</option>
+                      <option value="prefer-not-to-say">Prefer not to say</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="session">Session <span class="required">*</span></label>
+                    <select id="session" name="session" required>
+                      <option value="">Choose a session...</option>
+                      <option value="10-11-mixed">10:00–11:00 — Ages 6–11 (Mixed)</option>
+                      <option value="11-12-mixed">11:00–12:00 — Ages 11–16 (Mixed)</option>
+                      <option value="1-2-girls">1:00–2:00 — Girls Only (Ages 6–13)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Medical & Consent Section -->
+              <div class="form-section">
+                <div class="form-section-title">🏥 Medical & Consent</div>
+                <div class="form-group">
+                  <label for="medicalInfo">Medical Information</label>
+                  <textarea id="medicalInfo" name="medical_info" placeholder="e.g. Asthma — carries an inhaler. Any allergies, conditions, or medications we should know about."></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-checkbox">
+                    <input type="checkbox" id="photoConsent" name="photo_consent" checked>
+                    <span>I consent to my child being photographed during sessions for promotional purposes. (Uncheck to opt out)</span>
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label class="form-checkbox">
+                    <input type="checkbox" id="termsAccept" name="terms" required>
+                    <span>I confirm my child will wear shin pads and appropriate footwear (no studs/blades), and I understand the £1 session fee is cash only. <span class="required">*</span></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-submit">
+                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                  Register My Child ⚽
+                </button>
+              </div>
+            </form>
+
+            <p class="form-note">
+              Alternatively, you can register via our <a href="https://forms.gle/E4xSEVLMoVC2vXQU8" target="_blank" rel="noopener">Google Form ↗</a>
+            </p>
+          </div>
+
+          <!-- Success Message -->
+          <div class="form-success" id="formSuccess">
+            <div class="success-icon">🎉</div>
+            <h2>Registration Complete!</h2>
+            <p>Thank you for registering. We look forward to seeing your child at the next session!</p>
+            <p style="margin-bottom:1.5rem;"><strong>Remember:</strong> £1 cash, shin pads, and a water bottle. See you Saturday! ⚽</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+              <a href="/" class="btn btn-secondary">← Back to Home</a>
+              <button class="btn btn-primary" onclick="resetForm()">Register Another Child</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/register.js"></script>
+  <script>
+    // Mobile nav toggle
+    document.getElementById('navToggle')?.addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>
