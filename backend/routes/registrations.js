@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../db');
 
 // Create a new registration
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const {
     parent_name,
     parent_email,
@@ -32,21 +32,20 @@ router.post('/', (req, res) => {
   }
 
   try {
-    const stmt = db.prepare(`
-      INSERT INTO registrations (parent_name, parent_email, parent_phone, child_name, child_dob, child_gender, session, medical_info, photo_consent, source)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'website')
-    `);
-
-    const result = stmt.run(
-      parent_name,
-      parent_email || null,
-      parent_phone,
-      child_name,
-      child_dob,
-      child_gender || null,
-      session,
-      medical_info || null,
-      photo_consent !== undefined ? (photo_consent ? 1 : 0) : 1
+    const result = await db.run(
+      `INSERT INTO registrations (parent_name, parent_email, parent_phone, child_name, child_dob, child_gender, session, medical_info, photo_consent, source)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'website')`,
+      [
+        parent_name,
+        parent_email || null,
+        parent_phone,
+        child_name,
+        child_dob,
+        child_gender || null,
+        session,
+        medical_info || null,
+        photo_consent !== undefined ? (photo_consent ? 1 : 0) : 1
+      ]
     );
 
     res.status(201).json({
@@ -60,7 +59,7 @@ router.post('/', (req, res) => {
 });
 
 // Get all registrations (admin)
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const { search, session, source } = req.query;
 
   let query = 'SELECT * FROM registrations WHERE 1=1';
@@ -85,7 +84,7 @@ router.get('/', (req, res) => {
   query += ' ORDER BY created_at DESC';
 
   try {
-    const rows = db.prepare(query).all(...params);
+    const rows = await db.query(query, params);
     res.json(rows);
   } catch (err) {
     console.error('Fetch error:', err);
@@ -94,18 +93,18 @@ router.get('/', (req, res) => {
 });
 
 // Get registration stats
-router.get('/stats', (req, res) => {
+router.get('/stats', async (req, res) => {
   try {
-    const total = db.prepare('SELECT COUNT(*) as count FROM registrations').get();
-    const bySession = db.prepare('SELECT session, COUNT(*) as count FROM registrations GROUP BY session').all();
-    const bySource = db.prepare('SELECT source, COUNT(*) as count FROM registrations GROUP BY source').all();
-    const recent = db.prepare("SELECT COUNT(*) as count FROM registrations WHERE created_at >= datetime('now', '-7 days')").get();
+    const total = await db.queryOne('SELECT COUNT(*) as count FROM registrations');
+    const bySession = await db.query('SELECT session, COUNT(*) as count FROM registrations GROUP BY session');
+    const bySource = await db.query('SELECT source, COUNT(*) as count FROM registrations GROUP BY source');
+    const recent = await db.queryOne("SELECT COUNT(*) as count FROM registrations WHERE created_at >= datetime('now', '-7 days')");
 
     res.json({
-      total: total.count,
+      total: total ? total.count : 0,
       bySession,
       bySource,
-      recentWeek: recent.count
+      recentWeek: recent ? recent.count : 0
     });
   } catch (err) {
     console.error('Stats error:', err);
@@ -114,9 +113,9 @@ router.get('/stats', (req, res) => {
 });
 
 // Export as CSV
-router.get('/export', (req, res) => {
+router.get('/export', async (req, res) => {
   try {
-    const rows = db.prepare('SELECT * FROM registrations ORDER BY created_at DESC').all();
+    const rows = await db.query('SELECT * FROM registrations ORDER BY created_at DESC');
 
     const headers = ['ID', 'Parent Name', 'Email', 'Phone', 'Child Name', 'Date of Birth', 'Gender', 'Session', 'Medical Info', 'Photo Consent', 'Source', 'Registered At'];
     const csvRows = rows.map(row => [
@@ -146,11 +145,11 @@ router.get('/export', (req, res) => {
 });
 
 // Delete a registration
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = db.prepare('DELETE FROM registrations WHERE id = ?').run(id);
+    const result = await db.run('DELETE FROM registrations WHERE id = ?', [id]);
 
     if (result.changes === 0) {
       return res.status(404).json({ error: 'Registration not found.' });

@@ -18,7 +18,7 @@ const upload = multer({
 });
 
 // Import from Google Forms CSV
-router.post('/google-forms', upload.single('csvfile'), (req, res) => {
+router.post('/google-forms', upload.single('csvfile'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No CSV file uploaded.' });
   }
@@ -44,21 +44,12 @@ router.post('/google-forms', upload.single('csvfile'), (req, res) => {
     // Auto-map common Google Forms column patterns
     const columnMap = autoMapColumns(headers);
 
-    const insertStmt = db.prepare(`
-      INSERT INTO registrations (parent_name, parent_email, parent_phone, child_name, child_dob, child_gender, session, medical_info, photo_consent, source)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'google_forms')
-    `);
-
-    // Check for duplicates
-    const checkDuplicate = db.prepare(
-      'SELECT id FROM registrations WHERE child_name = ? AND child_dob = ?'
-    );
-
     let imported = 0;
     let skipped = 0;
     let errors = [];
 
-    const insertMany = db.transaction((records) => {
+    // Use transaction
+    await db.transaction(async (tx) => {
       for (let i = 0; i < records.length; i++) {
         const row = records[i];
         try {
@@ -80,23 +71,30 @@ router.post('/google-forms', upload.single('csvfile'), (req, res) => {
 
           // Check for duplicate
           if (childName && childDob) {
-            const existing = checkDuplicate.get(childName, childDob);
+            const existing = await tx.queryOne(
+              'SELECT id FROM registrations WHERE child_name = ? AND child_dob = ?',
+              [childName, childDob]
+            );
             if (existing) {
               skipped++;
               continue;
             }
           }
 
-          insertStmt.run(
-            parentName,
-            parentEmail || null,
-            parentPhone,
-            childName,
-            childDob || 'Not provided',
-            childGender || null,
-            session,
-            medicalInfo || null,
-            photoConsent
+          await tx.run(
+            `INSERT INTO registrations (parent_name, parent_email, parent_phone, child_name, child_dob, child_gender, session, medical_info, photo_consent, source)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'google_forms')`,
+            [
+              parentName,
+              parentEmail || null,
+              parentPhone,
+              childName,
+              childDob || 'Not provided',
+              childGender || null,
+              session,
+              medicalInfo || null,
+              photoConsent
+            ]
           );
           imported++;
         } catch (err) {
@@ -105,8 +103,6 @@ router.post('/google-forms', upload.single('csvfile'), (req, res) => {
         }
       }
     });
-
-    insertMany(records);
 
     res.json({
       message: `Import complete. ${imported} records imported, ${skipped} skipped.`,
